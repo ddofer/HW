@@ -8,11 +8,10 @@ from torch.utils.data import DataLoader
 from transformers import AutoModelForSequenceClassification, AutoTokenizer, AutoConfig
 from transformers import Trainer, TrainingArguments
 from datasets import load_dataset
-import wandb
+# import wandb
 
 def main(args):
-    wandb.login()
-    ## fast debug - "google/bert_uncased_L-2_H-128_A-2" 
+    # wandb.login()
     models = ['roberta-base','bert-base-uncased', 'google/electra-base-generator'] # what, no deberta-V3? (the SOTA barring feat.engineering :D)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -50,7 +49,7 @@ def main(args):
                 # num_train_epochs= 1,#3, # use default
                 logging_dir='./logs',
                 seed=seed,
-                report_to="wandb",
+                # report_to="wandb",
                 logging_strategy="epoch",
                 evaluation_strategy="epoch",
                 run_name=f"{model_name}_seed_{seed}",
@@ -86,7 +85,6 @@ def main(args):
     trainer.save_model('best_model') # save trainer's best model + weights
     print("mean_std_accuracies\n",mean_std_accuracies)
     print("best_model\n",best_model)
-    # trainer.state.log_history['train_runtime'] # ADD! 
 
     with open("res.txt", "w") as f:
         for model_result in mean_std_accuracies:
@@ -154,10 +152,9 @@ def main(args):
 #         self.test_samples = test_samples
 
 # # args = Args(2,256,64,16)
-# # args = Args(3,512,-1,-1)
 # args = Args(3,-1,-1,-1)
 # ## note: SOTA on dev set acc is ~ 96 (with bigger models and more epochs etc'. I get good/comparable with my own models - ST or SB autoML)
-# main(args)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
